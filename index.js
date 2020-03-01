@@ -50,31 +50,47 @@ app.get("/menus", (req, res) => {
 app.get("/order/:id", (req, res) => {
     const id = req.params.id;
 
-    switch (id) {
-        case "1":
-            stock.coffee -= menu.espresso.coffeeNeeded;
-            stock.water -= menu.espresso.waterNeeded;
-            stock.milk -= menu.espresso.milkNeeded;
-            stock.cups--;
+    var coffeeNeeded = 0;
+    var waterNeeded = 0;
+    var milkNeeded = 0;
 
-            res.send(menu.espresso);
+    switch (id) {
+
+        case "1":
+            coffeeNeeded = menu.espresso.coffeeNeeded;
+            waterNeeded = menu.espresso.waterNeeded;
+            milkNeeded = menu.espresso.milkNeeded;
             break;
         case "2":
-            stock.coffee -= menu.latte.coffeeNeeded;
-            stock.water -= menu.latte.waterNeeded;
-            stock.milk -= menu.latte.milkNeeded;
-            stock.cups--;
-
-            res.send(menu.latte);
+            coffeeNeeded = menu.latte.coffeeNeeded;
+            waterNeeded = menu.latte.waterNeeded;
+            milkNeeded = menu.latte.milkNeeded;
             break;
         case "3":
-            stock.coffee -= menu.cappuccino.coffeeNeeded;
-            stock.water -= menu.cappuccino.waterNeeded;
-            stock.milk -= menu.cappuccino.milkNeeded;
-            stock.cups--;
-
-            res.send(menu.cappuccino);
+            coffeeNeeded = menu.cappuccino.coffeeNeeded;
+            waterNeeded = menu.cappuccino.waterNeeded;
+            milkNeeded = menu.cappuccino.milkNeeded;
             break;
+        default:
+            res.status(500).send('Error: Menu not found!');
+            break;
+    }
+
+    if (stock.cups === 0)
+        res.send('Sorry, not enough cups');
+    else if (stock.coffee < coffeeNeeded)
+        res.send('Sorry, not enough coffee beans');
+    else if (stock.water < waterNeeded)
+        res.send('Sorry, not enough water');
+    else if (stock.milk < milkNeeded)
+        res.send('Sorry, not enough milk');
+    else {
+        stock.coffee -= coffeeNeeded;
+        stock.water -= waterNeeded;
+        stock.milk -= milkNeeded;
+        stock.cups--;
+
+        res.send("I have enough resources, making you a coffee!");
     }
 });
 
