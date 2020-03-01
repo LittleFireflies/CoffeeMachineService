@@ -5,7 +5,8 @@ var stock = {
     "coffee": 250,
     "water": 1000,
     "milk": 500,
-    "cups": 10
+    "cups": 10,
+    "moneyBalance": 50
 };
 
 var menu = {
@@ -53,6 +54,7 @@ app.get("/order/:id", (req, res) => {
     var coffeeNeeded = 0;
     var waterNeeded = 0;
     var milkNeeded = 0;
+    var price = 0;
 
     switch (id) {
 
@@ -60,16 +62,19 @@ app.get("/order/:id", (req, res) => {
             coffeeNeeded = menu.espresso.coffeeNeeded;
             waterNeeded = menu.espresso.waterNeeded;
             milkNeeded = menu.espresso.milkNeeded;
+            price = menu.espresso.price;
             break;
         case "2":
             coffeeNeeded = menu.latte.coffeeNeeded;
             waterNeeded = menu.latte.waterNeeded;
             milkNeeded = menu.latte.milkNeeded;
+            price = menu.latte.price;
             break;
         case "3":
             coffeeNeeded = menu.cappuccino.coffeeNeeded;
             waterNeeded = menu.cappuccino.waterNeeded;
             milkNeeded = menu.cappuccino.milkNeeded;
+            price = menu.cappuccino.price;
             break;
         default:
             res.status(500).send('Error: Menu not found!');
@@ -89,9 +94,16 @@ app.get("/order/:id", (req, res) => {
         stock.water -= waterNeeded;
         stock.milk -= milkNeeded;
         stock.cups--;
+        stock.moneyBalance += price;
 
         res.send("I have enough resources, making you a coffee!");
     }
+});
+
+app.get("/takemoney", (req, res) => {
+   const money = stock.moneyBalance;
+   stock.moneyBalance = 0;
+   res.send(`I gave you $${money}`);
 });
 
 const PORT = process.env.PORT || 8000;
