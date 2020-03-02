@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({extended: true}));
 
 var stock = {
     "coffee": 250,
@@ -98,6 +101,20 @@ app.get("/order/:id", (req, res) => {
 
         res.send("I have enough resources, making you a coffee!");
     }
+});
+
+app.post("/fillstock", (req, res) => {
+   const coffee = parseInt(req.body.coffee || '0');
+   const water = parseInt(req.body.water || '0');
+   const milk = parseInt(req.body.milk || '0');
+   const cups = parseInt(req.body.cups || '0');
+
+   stock.coffee += coffee;
+   stock.water += water;
+   stock.milk += milk;
+   stock.cups += cups;
+
+   res.send('Stocks added successfully');
 });
 
 app.get("/takemoney", (req, res) => {
