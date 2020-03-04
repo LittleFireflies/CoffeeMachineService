@@ -13,30 +13,38 @@ var stock = {
 };
 
 var menu = {
-    "espresso": {
-        "id": 1,
-        "name": "espresso",
-        "coffeeNeeded": 16,
-        "waterNeeded": 250,
-        "milkNeeded": 0,
-        "price": 4
-    },
-    "latte": {
-        "id": 2,
-        "name": "latte",
-        "coffeeNeeded": 20,
-        "waterNeeded": 350,
-        "milkNeeded": 7,
-        "price": 7
-    },
-    "cappuccino": {
-        "id": 3,
-        "name": "cappuccino",
-        "coffeeNeeded": 12,
-        "waterNeeded": 200,
-        "milkNeeded": 100,
-        "price": 6
-    }
+    "data": [
+        {
+            "id": 1,
+            "name": "espresso",
+            "description": "An espresso is a small volume of concentrated coffee, extracted under pressure with water at no more than 98 degrees celsius.",
+            "image": "images/espresso.jpg",
+            "coffeeNeeded": 16,
+            "waterNeeded": 250,
+            "milkNeeded": 0,
+            "price": 4
+        },
+        {
+            "id": 2,
+            "name": "latte",
+            "description": "A Latte or Cafe con Latte is made the same way as a cappuccino except that it is served in a larger 220 ml glass and only has 10mm of foam.",
+            "image": "images/latte.jpg",
+            "coffeeNeeded": 20,
+            "waterNeeded": 350,
+            "milkNeeded": 7,
+            "price": 7
+        },
+        {
+            "id": 3,
+            "name": "cappuccino",
+            "description": "A cappuccino starts with the espresso but this is topped with milk textured (frothed) to no more than 65 degrees celsius.",
+            "image": "images/cappuccino.png",
+            "coffeeNeeded": 12,
+            "waterNeeded": 200,
+            "milkNeeded": 100,
+            "price": 6
+        }
+    ]
 };
 
 app.get("/", (req, res) => {
@@ -52,37 +60,15 @@ app.get("/menus", (req, res) => {
 });
 
 app.get("/order/:id", (req, res) => {
-    const id = req.params.id;
+    const id = parseInt(req.params.id || '0');
+    var selectedMenu = menu.data.filter(function (item) {
+        return item.id === id
+    });
 
-    var coffeeNeeded = 0;
-    var waterNeeded = 0;
-    var milkNeeded = 0;
-    var price = 0;
-
-    switch (id) {
-
-        case "1":
-            coffeeNeeded = menu.espresso.coffeeNeeded;
-            waterNeeded = menu.espresso.waterNeeded;
-            milkNeeded = menu.espresso.milkNeeded;
-            price = menu.espresso.price;
-            break;
-        case "2":
-            coffeeNeeded = menu.latte.coffeeNeeded;
-            waterNeeded = menu.latte.waterNeeded;
-            milkNeeded = menu.latte.milkNeeded;
-            price = menu.latte.price;
-            break;
-        case "3":
-            coffeeNeeded = menu.cappuccino.coffeeNeeded;
-            waterNeeded = menu.cappuccino.waterNeeded;
-            milkNeeded = menu.cappuccino.milkNeeded;
-            price = menu.cappuccino.price;
-            break;
-        default:
-            res.status(500).send('Error: Menu not found!');
-            break;
-    }
+    var coffeeNeeded = selectedMenu[0].coffeeNeeded || 0;
+    var waterNeeded = selectedMenu[0].waterNeeded || 0;
+    var milkNeeded = selectedMenu[0].milkNeeded || 0;
+    var price = selectedMenu[0].price || 0;
 
     if (stock.cups === 0)
         res.send('Sorry, not enough cups');
